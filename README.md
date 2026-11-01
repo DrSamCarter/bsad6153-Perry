@@ -1,7 +1,7 @@
 # BSAD 6153 Project: Faculty-Student Mentor Groups
 
 **Student:** &lt;your name&gt;
-**My decision:** Which faculty to recruit as mentors, and how many mentees each can take
+**My decision:** What information should we collect from faculty who want to mentor?
 **Website:** &lt;your domain, from Week 4&gt;
 
 This repository is one complete AI system, built over eight weeks: a real API, synced on a schedule into a
@@ -96,7 +96,7 @@ every command before you approve it, and keep auto-approve off.
 
 ## Project proposal (Week 1)
 
-<!-- DRAFT by Claude: rewrite in your own words, and fill the TODOs from your baseline log. -->
+<!-- DRAFT by Claude: rewrite in your own words, and fill the remaining TODO (terms of service). -->
 
 **Data source and backup.** I lead the committee developing faculty-student mentor groups at my
 college. Real student records are protected by FERPA and this site goes public in Week 4, so the
@@ -107,12 +107,14 @@ My instructor approved dummy data. **Backup:** the Random User API (randomuser.m
 key and pages through generated people with a seed; departments and programs would then be added
 in my own code.
 
-**My decision and workflow.** The decision is which faculty to recruit as mentors and how many
-mentees each can take. Today I make it by TODO (from the baseline log: what you check, e.g. the
-faculty directory, emails, sign-up responses, conversations). It takes about TODO minutes per
-faculty member, and the hardest part is TODO. The system should put each faculty member's
-department, program, mentoring strengths, willingness and capacity in one place, and show where
-current assignments break those limits.
+**My decision and workflow.** Our mentor program is new, so my current decision is what
+information we should collect from faculty who want to mentor. Today I make it by email with my
+committee over several days: I draft a list from my notes and the faculty roster, send it out,
+then review replies and revise. My first session took 17 minutes, and my confidence afterward was
+only 2 out of 5 because I didn't know what the other committee members felt was important. The
+system should make that information concrete: store each faculty member's department, program,
+mentoring strengths, willingness and capacity in one place, so the committee can see which fields
+actually matter for matching students, and where current assignments break those limits.
 
 **Agent idea (first draft).** When a new cohort of students arrives, an agent proposes mentor
 assignments: it matches each student's program and mentoring need to a willing faculty member with
