@@ -1,9 +1,5 @@
 # Data Dictionary (Week 1)
 
-> **Draft.** Claude drafted this from our verified docs checks and test runs on Nov 1, 2026.
-> Before submitting: check every claim, rewrite the ethics answers in my own words, and fill in
-> anything marked **TODO**.
-
 ## Source
 
 | | |
@@ -12,7 +8,7 @@
 | **Base URL** | `https://api.mockaroo.com/api` |
 | **Endpoint used** | `POST /generate.json?count=N`, with the field definitions (schema) sent as the JSON body |
 | **Documentation** | https://docs.mockaroo.com/ (field types) and https://www.mockaroo.com/docs (API) |
-| **Terms of service** | TODO: paste the link from the footer of mockaroo.com |
+| **Terms of service** | https://www.mockaroo.com/help/terms_of_use (effective February 7, 2015) |
 | **Authentication** | API key from a free Mockaroo account, sent as the `X-API-Key` header. The docs also allow a `key` query parameter; I chose the header so the key never appears in URLs, logs or my screencast. The key lives only in `.env` as `MOCKAROO_API_KEY`. |
 | **Plan and limits** | Free plan: 200 API requests per day, up to 1,000 rows per request. A full run uses 6 requests. |
 | **Output format** | JSON. Mockaroo also offers CSV and custom-delimited output; I use JSON because the assignment asks for raw JSON responses. |
@@ -130,18 +126,8 @@ Sciences, not in Allied Health or HPER.
 
 ## Data-use ethics check
 
-> TODO: rewrite each answer in my own words.
 
-- **What do the terms allow and forbid?** TODO after reading the terms: storage, public display,
-  commercial use, attribution. The data itself is generated for me, so I expect storing and
-  displaying it to be allowed; confirm, and add any required attribution to the README's Credits.
-- **Does this data describe real, identifiable people?** No. Every person is generated, and emails
-  use reserved fake domains. The only real information is my college's department and program
-  names, which are public. If this system were later used with real students, that data would be
-  protected by FERPA and could never be shown on a public site.
-- **Worst realistic harm if it leaked or were misread?** A leak exposes no one. The real risk is
-  misreading: someone could mistake the fake records or the random mentor loads for real
-  information about my college's faculty. The website should clearly say all people are fictional.
-- **Who should be allowed to read or change these records?** Only me (the sync, as database owner)
-  should change records. The public website and chatbot get read-only access, and the Week 6 agent
-  should be able to *propose* mentor assignments but not change them without my approval.
+- **What do the terms allow and forbid?** There is no warranty and no attribution is required. The generated data can be used for any purpose but can't be used to build another data generator.
+- **Does this data describe real, identifiable people?** No, all data is generated, with the exception of the departments and subjects from the school website, which is public knowledge. This does not impact FERPA once this project goes public.
+- **Worst realistic harm if it leaked or were misread?** There is no risk if something is leaked. I considered an issue arising from someone reading the dataset and thinking that the email addresses were real so we changed that to make it @example.edu for faculty, and @students.example.edu for students.
+- **Who should be allowed to read or change these records?** Only I will be allowed to change these records. Anyone can technically see the data on my public website but no one but me will access this database. This is because it is using dummy data. 

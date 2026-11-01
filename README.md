@@ -96,7 +96,7 @@ every command before you approve it, and keep auto-approve off.
 
 ## Project proposal (Week 1)
 
-<!-- DRAFT by Claude: rewrite in your own words, and fill the remaining TODO (terms of service). -->
+<!-- DRAFT by Claude: rewrite in your own words. -->
 
 **Data source and backup.** I lead the committee developing faculty-student mentor groups at my
 college. Real student records are protected by FERPA and this site goes public in Week 4, so the
@@ -124,8 +124,9 @@ or sends an email without my approval.
 **Risks.** Rate limits: the free plan allows 200 requests a day, and a full fetch uses 6; the
 script waits between requests and stops cleanly if the daily limit is reached. Key expiry: the key
 is tied to my Mockaroo account and can be regenerated if it leaks. Data volume: small (about 560
-records), well under the 1,000-rows-per-request limit. Terms of service: TODO, confirm that storing
-and publicly displaying generated data is allowed and whether attribution is required. Finally, the
+records), well under the 1,000-rows-per-request limit. Terms of service: Mockaroo allows any use
+of generated data except building another data generator, so storing and publicly displaying it
+is fine; the data comes without warranty, so I verify it myself. Finally, the
 fake data must never be mistaken for real people; the website will say so.
 
 ## How to run this project
@@ -147,7 +148,8 @@ fake data must never be mistaken for real people; the website will say so.
 
 ## Credits
 
-- Fake data generated with [Mockaroo](https://www.mockaroo.com/). TODO: add any attribution its
-  terms require.
+- Fake data generated with [Mockaroo](https://www.mockaroo.com/). Its
+  [terms of use](https://www.mockaroo.com/help/terms_of_use) allow any use except building another
+  data generator and don't require attribution; I credit it anyway.
 - Department and program names are my college's real ones; all people, emails and other values are
   fictional.
