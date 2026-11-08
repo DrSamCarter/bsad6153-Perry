@@ -2,8 +2,4 @@ In my data first-generation students seem to have equality and be fairly distrib
 
 For first-generation students, with an N of 231, 67% have a mentor but only 5.8% have a mentor in their own department. If we look at non-first-generation students, with an N of 269, we see that 66% have a mentor but almost 13% have a mentor that's in the student's own department. First-gen students get a mentor from their own department: less than half of what non-first-gen students get. The assumption should be that first-gen students would get mentors in their own department more often because first-generation students would need more help individually. That's the Since Microru assigns mentors randomly, my next thought would be: Is that really bias? Since nobody designed the pattern an agent couldn't tell the difference and that it was an accident, which relates directly to the Amsterdam scenario, where the model learned from historical decisions without understanding them.
 
-Thank you. Anyways over the course of these conversations we'll be able to agree on a price that should enable us to secure these for every month, rather than once after lunch or something.
 
-My job is to
-
-To a new era in Washington and across the country for the first Black president, then the White House looked to lower tensions. That's the exact same scenario as we read about in the Amsterdam reading, but inside my data. From a brief perusal of the data, it looks to be fair but when you try to dig down and understand what's happening, you can see that there's bias inside the data.
