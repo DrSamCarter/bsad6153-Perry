@@ -1,0 +1,108 @@
+{
+  "faculty": [
+    {
+      "faculty_id": 1,
+      "first_name": "Gerti",
+      "last_name": "Guiducci",
+      "email": "gerti.guiducci@example.edu",
+      "department": "MS",
+      "subject_area": "Biology",
+      "mentoring_focus": "Career Preparation",
+      "willing_to_mentor": true,
+      "max_mentees": 6,
+      "years_at_institution": 7
+    },
+    {
+      "faculty_id": 2,
+      "first_name": "Dinah",
+      "last_name": "Synke",
+      "email": "dinah.synke@example.edu",
+      "department": "HUM",
+      "subject_area": "English",
+      "mentoring_focus": "Academic Success",
+      "willing_to_mentor": true,
+      "max_mentees": 5,
+      "years_at_institution": 24
+    },
+    {
+      "faculty_id": 3,
+      "first_name": "Coriss",
+      "last_name": "Orteau",
+      "email": "coriss.orteau@example.edu",
+      "department": "HUM",
+      "subject_area": "English",
+      "mentoring_focus": "Transfer Planning",
+      "willing_to_mentor": true,
+      "max_mentees": 5,
+      "years_at_institution": 6
+    }
+  ],
+  "students": [
+    {
+      "student_id": 1,
+      "first_name": "Vito",
+      "last_name": "McGing",
+      "email": "vito.mcging@students.example.edu",
+      "department": "SS",
+      "subject_area": "Secondary Education",
+      "entry_term": "Fall 2026",
+      "first_generation": false,
+      "athlete": false,
+      "mentoring_need": "Life Skills",
+      "preferred_meeting": "Online",
+      "mentor_faculty_id": 45
+    },
+    {
+      "student_id": 2,
+      "first_name": "Consuelo",
+      "last_name": "Dinesen",
+      "email": "consuelo.dinesen@students.example.edu",
+      "department": "TV",
+      "subject_area": "Agriculture",
+      "entry_term": "Spring 2026",
+      "first_generation": true,
+      "athlete": true,
+      "mentoring_need": "Life Skills",
+      "preferred_meeting": "Either"
+    },
+    {
+      "student_id": 3,
+      "first_name": "Mar",
+      "last_name": "Dovydenas",
+      "email": "mar.dovydenas@students.example.edu",
+      "department": "HUM",
+      "subject_area": "Language",
+      "entry_term": "Spring 2026",
+      "first_generation": true,
+      "athlete": true,
+      "mentoring_need": "Life Skills",
+      "preferred_meeting": "Online"
+    },
+    {
+      "student_id": 4,
+      "first_name": "Leeann",
+      "last_name": "Reville",
+      "email": "leeann.reville@students.example.edu",
+      "department": "TV",
+      "subject_area": "Agriculture",
+      "entry_term": "Fall 2025",
+      "first_generation": false,
+      "athlete": true,
+      "mentoring_need": "Career Preparation",
+      "preferred_meeting": "Either"
+    },
+    {
+      "student_id": 5,
+      "first_name": "Marijn",
+      "last_name": "Curneen",
+      "email": "marijn.curneen@students.example.edu",
+      "department": "FAPA",
+      "subject_area": "Art",
+      "entry_term": "Fall 2026",
+      "first_generation": true,
+      "athlete": true,
+      "mentoring_need": "Life Skills",
+      "preferred_meeting": "Online"
+    }
+  ]
+}
