@@ -102,3 +102,53 @@ from mentoring_focus_areas mfa
 left join demand d on d.focus_area = mfa.focus_area
 left join supply s on s.focus_area = mfa.focus_area
 order by shortfall desc;
+
+
+-- Q7: For each student still waiting for a mentor, who is the best available mentor?
+--     A candidate must be willing, offer the student's mentoring need as a focus area,
+--     and still have an open spot (current mentees < max_mentees).
+--     Best = same program first, then same department, then the most open spots.
+--     Students with no candidate show blanks: nobody qualified has room.
+--     Order: students who started earliest come first (a placeholder until the
+--     committee sets real priority rules).
+--     This query only SUGGESTS; recording a pairing is a separate, deliberate step.
+--     Limitation: each student is matched on their own, so one mentor with 2 open spots
+--     can be suggested to many students. Assign one, rerun, and the list updates.
+with open_mentors as (
+    select f.faculty_pk, f.faculty_id,
+           f.first_name || ' ' || f.last_name as mentor_name,
+           f.department_code,
+           f.max_mentees - count(ma.student_pk) as open_spots
+    from faculty f
+    left join mentor_assignments ma on ma.faculty_pk = f.faculty_pk
+    where f.willing_to_mentor
+    group by f.faculty_pk
+    having count(ma.student_pk) < f.max_mentees
+)
+select s.student_id,
+       s.first_name || ' ' || s.last_name as student_name,
+       s.entry_term,
+       s.department_code,
+       s.mentoring_need,
+       best.faculty_id as suggested_mentor_id,
+       best.mentor_name as suggested_mentor,
+       best.open_spots,
+       best.reason
+from students s
+left join lateral (
+    select om.faculty_id, om.mentor_name, om.open_spots,
+           case when fs.program_name is not null then 'same program'
+                when om.department_code = s.department_code then 'same department'
+                else 'focus area only' end as reason
+    from open_mentors om
+    join faculty_focus_areas ffa
+         on ffa.faculty_pk = om.faculty_pk and ffa.focus_area = s.mentoring_need
+    left join faculty_subjects fs
+         on fs.faculty_pk = om.faculty_pk and fs.program_name = s.program_name
+    order by (fs.program_name is not null) desc,
+             (om.department_code = s.department_code) desc,
+             om.open_spots desc
+    limit 1
+) best on true
+where not exists (select 1 from mentor_assignments ma where ma.student_pk = s.student_pk)
+order by s.entry_term_start, s.student_id;
