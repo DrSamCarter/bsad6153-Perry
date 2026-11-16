@@ -135,3 +135,61 @@ to find, so `db/queries.sql` reports them instead.
 
 `entry_term_start` assumes terms start on January 15 (Spring), June 1 (Summer) and August 20
 (Fall). Adjust `TERM_START` in `ingest/load.py` to match the college calendar.
+
+## Access roles
+
+Not every part of the system connects with the same power. The database admin user can create,
+change, or drop anything, so only the sync pipeline uses it. Everything that only needs to read
+(the golden-question checker, the website, the chatbot) connects as `app_reader`, so a bad query
+or a manipulated chatbot prompt can't change or delete data.
+
+| Part of the system | Connects as | Connection string in `.env` | Allowed to |
+|---|---|---|---|
+| Sync pipeline (Week 3) | `postgres` | `DATABASE_URL` | Create tables, insert, update |
+| Golden-question checker (Week 3), website (Week 4), chatbot (Week 5) | `app_reader` | `APP_DATABASE_URL` | `SELECT` on the data tables, nothing else |
+| Agent (Week 6) | `agent_writer` | `AGENT_DATABASE_URL` | Created in Week 6 |
+
+The role and its grants are in [`db/roles.sql`](../db/roles.sql). Each table is granted by name,
+so a new table stays unreadable to `app_reader` until it gets its own `grant select` line. The
+password was set separately in the Supabase SQL editor and is not stored in the repository.
+
+Supabase's automatic REST **Data API** is off (Integrations → Data API → Overview; checked
+2026-11-15, already disabled). The project doesn't use it, and with it off, the tables can be
+reached only through the database roles above.
+
+### Proof (2026-11-15)
+
+Connecting with `APP_DATABASE_URL`:
+
+```
+> python scripts/check_db.py --app
+[ok] Connected using APP_DATABASE_URL
+     Database user: app_reader
+     Server: PostgreSQL 17.11 on x86_64-pc-linux-gnu
+```
+
+Connected as `app_reader`, a `SELECT` works and a `DELETE` and an `INSERT` are refused
+([`scripts/check_roles.py`](../scripts/check_roles.py) rolls back every statement, so nothing
+could be saved even if a permission were wrong):
+
+```
+> python scripts/check_roles.py
+Connected as database user: app_reader
+
+-- SELECT should work
+select count(*) from students;
+OK: 500 rows
+[ok] as expected
+
+-- DELETE should fail
+delete from students where student_id = 1;
+ERROR: permission denied for table students
+[ok] as expected
+
+-- INSERT should fail
+insert into departments (department_code, department_name, students_only) values ('TEST', 'Permission test', false);
+ERROR: permission denied for table departments
+[ok] as expected
+
+3 of 3 checks behaved as expected.
+```
