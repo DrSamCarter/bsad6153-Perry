@@ -42,8 +42,9 @@ grant select on
     mentor_assignments
 to app_reader;
 
--- Week 3, Part C: uncomment after sync_runs is created, then rerun this file.
--- grant select on sync_runs to app_reader;
+-- Week 3, Part C: the sync log. app_reader may read it (the website shows "last updated",
+-- the chatbot warns when data is stale), but only the sync, as postgres, may write to it.
+grant select on sync_runs to app_reader;
 
 
 -- ---------------------------------------------------------------------------
