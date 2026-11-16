@@ -115,8 +115,8 @@ Sciences, not in Allied Health or HPER.
    `null`; the `mentor_faculty_id` key isn't in the record at all. My first checker crashed on it.
 4. **IDs restart every request.** Mockaroo's Row Number starts at 1 on each request, so batch 2
    would have duplicated students 1-100. I switched to a Sequence that starts where the last batch ended.
-5. **Mentor assignments break the rules.** Random assignment ignores capacity: in the full run 43 of
-   60 faculty had more mentees than their `max_mentees`, and 31 faculty marked unwilling still had
+5. **Mentor assignments break the rules.** Random assignment ignores capacity: in the full run 40 of
+   60 faculty had more mentees than their `max_mentees`, and 32 faculty marked unwilling still had
    mentees. This is the kind of problem the system should catch.
 6. **The docs disagree about the limit.** The pricing page says "200 requests/day," but the library
    docs describe exceeding a number of *records* per 24 hours. The docs also don't say which HTTP
