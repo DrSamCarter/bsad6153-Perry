@@ -1,0 +1,63 @@
+# Week 3: run ingest/sync.py on a schedule, and on demand from the Actions tab.
+#
+# Secrets (Settings > Secrets and variables > Actions > Repository secrets):
+#   DATABASE_URL      the Supabase session-pooler connection string (GitHub can't reach the
+#                     direct IPv6 address), as the owner role, same value as in .env
+#   MOCKAROO_API_KEY  the Mockaroo key, same value as in .env
+# Secrets are never written in this file or printed in the log.
+#
+# GitHub only runs the schedule from the default branch (main), so this file has to be
+# merged into main before scheduled runs start.
+
+name: Sync
+
+on:
+  schedule:
+    # Every 12 hours, at 00:17 and 12:17 UTC (6:17 pm and 6:17 am Central).
+    # Minute 17 avoids the top of the hour, when GitHub's scheduler is busiest and delays runs.
+    - cron: "17 */12 * * *"
+  workflow_dispatch: {}  # the "Run workflow" button
+
+# Never let two syncs run at once; a second one waits for the first to finish.
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read  # the job only needs to read the code
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10  # a normal run takes under a minute; a hung one gets stopped
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install packages
+        run: pip install -r requirements.txt
+
+      - name: Run the sync
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          MOCKAROO_API_KEY: ${{ secrets.MOCKAROO_API_KEY }}
+          # Recorded in sync_runs.trigger: 'schedule' for timed runs, 'manual' for the button.
+          TRIGGER: ${{ github.event_name == 'schedule' && 'schedule' || 'manual' }}
+        run: python ingest/sync.py --trigger "$TRIGGER"
+
+      # The runner is deleted after the job, so keep the raw fetch as a downloadable file
+      # (on the run's page, under Artifacts). Kept even when the sync fails.
+      - name: Save the raw fetch
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: raw-fetch-${{ github.run_number }}
+          path: data/raw/sync/
+          if-no-files-found: ignore
+          retention-days: 30

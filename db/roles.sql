@@ -1,20 +1,53 @@
--- db/roles.sql: who may do what in your database (Week 2, extended in Week 6).
+-- db/roles.sql: who may do what in the database.
 --
--- NEVER PUT A PASSWORD IN THIS FILE. It is committed to GitHub.
+-- NEVER PUT A PASSWORD IN THIS FILE. It is committed to a public GitHub repository.
 -- Create each role here without a password, then set the password separately
--- in the Supabase SQL editor (and nowhere in your repository):
+-- in the Supabase SQL editor (and nowhere in the repository):
 --
 --     alter role app_reader with password '...long random password...';
 --
--- Then put the role's connection string in .env as APP_DATABASE_URL.
+-- Then put the role's Session pooler connection string in .env as APP_DATABASE_URL.
+-- With the pooler, the user name is app_reader.<project-ref>.
 --
--- Week 2: a read-only role for the website, chatbot, and golden-question checker.
--- create role app_reader login;
--- grant usage on schema public to app_reader;
--- grant select on <your data tables> to app_reader;
---
--- Week 3: add sync_runs to the grant above when you create it.
---
+-- Safe to run more than once: the role is only created if it doesn't exist yet,
+-- and granting a privilege that's already granted changes nothing. Rerun this file
+-- whenever a grant line is added.
+
+
+-- ---------------------------------------------------------------------------
+-- app_reader (Week 3): read-only role for the golden-question checker (Week 3),
+-- the website (Week 4), and the chatbot (Week 5). It can read the data tables
+-- and nothing else: no insert, update, delete, or creating tables.
+-- ---------------------------------------------------------------------------
+do $$
+begin
+    if not exists (select from pg_roles where rolname = 'app_reader') then
+        create role app_reader login;
+    end if;
+end
+$$;
+
+grant usage on schema public to app_reader;
+
+-- Every table is listed by name, so a table added later is NOT readable until
+-- it gets its own line here.
+grant select on
+    departments,
+    programs,
+    mentoring_focus_areas,
+    faculty,
+    students,
+    faculty_focus_areas,
+    faculty_subjects,
+    mentor_assignments
+to app_reader;
+
+-- Week 3, Part C: the sync log. app_reader may read it (the website shows "last updated",
+-- the chatbot warns when data is stale), but only the sync, as postgres, may write to it.
+grant select on sync_runs to app_reader;
+
+
+-- ---------------------------------------------------------------------------
 -- Week 6: the agent's own role (see the Week 6 page for the exact grants).
 -- create role agent_writer login;
 -- grant usage on schema public to agent_writer;

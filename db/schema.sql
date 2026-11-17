@@ -4,8 +4,9 @@
 --   Lookups (short fixed lists):  departments, programs, mentoring_focus_areas
 --   Entities (the people):        faculty, students
 --   Relationships (links):        faculty_focus_areas, faculty_subjects, mentor_assignments
+-- Plus one pipeline table (Week 3): sync_runs, a log of every sync run.
 --
--- Every table has first_seen_at and last_updated_at (audit columns), filled in automatically.
+-- Every data table has first_seen_at and last_updated_at (audit columns), filled in automatically.
 -- Safe to run more than once: "if not exists" skips tables that are already there.
 
 -- ---------------------------------------------------------------- lookups
@@ -65,7 +66,8 @@ create table if not exists students (
     email             text not null unique check (email like '%@students.example.edu'),
     department_code   text not null references departments (department_code),
     program_name      text not null,
-    entry_term        text not null check (entry_term ~ '^(Spring|Summer|Fall) [0-9]{4}$'),
+    -- Winter (Week 3) is the short session over the holiday break, labeled by the year it starts.
+    entry_term        text not null check (entry_term ~ '^(Winter|Spring|Summer|Fall) [0-9]{4}$'),
     -- First day of entry_term as a real date, so queries can filter by time.
     entry_term_start  date not null,
     first_generation  boolean not null,
@@ -115,3 +117,31 @@ create table if not exists mentor_assignments (
 -- Indexes for the foreign keys queries join on (Postgres doesn't add these automatically).
 create index if not exists students_department_idx on students (department_code);
 create index if not exists mentor_assignments_faculty_idx on mentor_assignments (faculty_pk);
+
+-- ---------------------------------------------------------------- pipeline log (Week 3)
+
+-- One row = one run of ingest/sync.py, written by every run, scheduled or manual.
+-- This is a log, not data about people, so it has no audit columns of its own.
+--
+-- How a run fills it in:
+--   1. At the start, the sync inserts a row with status 'failed' and the message
+--      'run did not finish', and commits it straight away (outside the data transaction).
+--   2. At the end, it updates that row with the real status, counts, and finished_at.
+-- So if a run is killed partway through, its row stays 'failed' with no finished_at,
+-- and the interruption is visible instead of silently missing.
+create table if not exists sync_runs (
+    run_id           bigint generated always as identity primary key,
+    started_at       timestamptz not null default now(),
+    finished_at      timestamptz,  -- null = still running, or interrupted
+    status           text not null default 'failed'
+                     check (status in ('success', 'partial', 'failed')),
+    records_fetched  integer not null default 0 check (records_fetched >= 0),
+    records_inserted integer not null default 0 check (records_inserted >= 0),
+    records_updated  integer not null default 0 check (records_updated >= 0),
+    error_message    text,  -- what went wrong; never a secret or connection string
+    trigger          text not null check (trigger in ('schedule', 'manual')),
+    check (finished_at is null or finished_at >= started_at)
+);
+
+-- status.py asks "when did the last successful run finish?" and "what ran this week?"
+create index if not exists sync_runs_started_idx on sync_runs (started_at);
