@@ -66,7 +66,8 @@ create table if not exists students (
     email             text not null unique check (email like '%@students.example.edu'),
     department_code   text not null references departments (department_code),
     program_name      text not null,
-    entry_term        text not null check (entry_term ~ '^(Spring|Summer|Fall) [0-9]{4}$'),
+    -- Winter (Week 3) is the short session over the holiday break, labeled by the year it starts.
+    entry_term        text not null check (entry_term ~ '^(Winter|Spring|Summer|Fall) [0-9]{4}$'),
     -- First day of entry_term as a real date, so queries can filter by time.
     entry_term_start  date not null,
     first_generation  boolean not null,

@@ -133,8 +133,11 @@ unwilling faculty having no mentees. The data breaks both (40 faculty over capac
 assigned to unwilling faculty). Rejecting those rows would hide the problems this system exists
 to find, so `db/queries.sql` reports them instead.
 
-`entry_term_start` assumes terms start on January 15 (Spring), June 1 (Summer) and August 20
-(Fall). Adjust `TERM_START` in `ingest/load.py` to match the college calendar.
+`entry_term_start` assumes terms start on January 15 (Spring), June 1 (Summer), August 20
+(Fall) and December 15 (Winter, the short holiday-break session, labeled by the year it starts:
+Winter 2026 runs December 2026 to January 2027). Adjust `TERM_START` in `ingest/load.py` to match
+the college calendar. Winter was added in Week 3; `db/alter_winter_term.sql` applied the wider
+`entry_term` check to the live table.
 
 ## Access roles
 

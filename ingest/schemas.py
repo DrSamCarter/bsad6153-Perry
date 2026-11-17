@@ -40,6 +40,8 @@ MENTORING_FOCUS = ["Career Preparation", "Academic Success", "Transfer Planning"
 STUDENT_SUBJECTS = {**SUBJECTS, "UND": ["Undeclared"]}
 
 ENTRY_TERMS = ["Fall 2025", "Spring 2026", "Fall 2026"]
+# Students added by the scheduled sync (Week 3) join the Winter session over the holiday break.
+SYNC_ENTRY_TERM = "Winter 2026"
 MEETING_PREFERENCES = ["In person", "Online", "Either"]
 
 # Faculty IDs run 1..FACULTY_COUNT, so a student's mentor_faculty_id always points at a real faculty row.
@@ -114,3 +116,31 @@ def student_fields(first_id, faculty_count=FACULTY_COUNT):
     id_field = {"name": "student_id", "type": "Sequence", "start": first_id, "step": 1}
     mentor_field = {**STUDENT_FIELDS[-1], "max": faculty_count}
     return [id_field] + STUDENT_FIELDS[1:-1] + [mentor_field]
+
+
+def new_student_fields(first_id, faculty_count=FACULTY_COUNT):
+    """Week 3 sync: new students, with IDs continuing after the highest one in the database,
+    all entering in SYNC_ENTRY_TERM."""
+    term_field = {"name": "entry_term", "type": "Custom List", "values": [SYNC_ENTRY_TERM],
+                  "selectionStyle": "random"}
+    return [term_field if f["name"] == "entry_term" else f
+            for f in student_fields(first_id, faculty_count)]
+
+
+# Week 3 change feed: share of changed students who lose their mentor (and go back to waiting).
+CHANGE_BLANK_MENTOR_PERCENT = 10
+
+
+def change_fields(student_ids, faculty_count=FACULTY_COUNT):
+    """Week 3 sync: new values for the two fields that can change for students already in the
+    database. A "sequential" Custom List hands out student_ids in the order given, one per row
+    (tested 2026-11-16), so request exactly len(student_ids) rows."""
+    return [
+        {"name": "student_id", "type": "Custom List", "values": [str(i) for i in student_ids],
+         "selectionStyle": "sequential"},
+        {"name": "mentoring_need", "type": "Custom List", "values": MENTORING_FOCUS,
+         "selectionStyle": "random"},
+        # Blank means the student's mentor was removed; the key is left out of the record.
+        {"name": "mentor_faculty_id", "type": "Number", "min": 1, "max": faculty_count,
+         "decimals": 0, "percentBlank": CHANGE_BLANK_MENTOR_PERCENT},
+    ]

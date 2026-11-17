@@ -39,18 +39,22 @@ RECENT_RUNS = """
 """
 
 # What changed in the data itself. A row counts as "new" if it was first seen in the window,
-# and as "updated" if it changed in the window but already existed before it.
+# and as "updated" if it was changed in the window after it was first inserted.
+# At insert both timestamps get the same now() (one value per transaction), so
+# last_updated_at > first_seen_at only after a real update. A row inserted and then changed
+# in the same week counts in both columns. Deleted rows (removed mentors) can't show here;
+# sync.py's output lists them.
 DATA_CHANGES = """
     select 'students',
            count(*) filter (where first_seen_at >= now() - make_interval(days => %(days)s)),
            count(*) filter (where last_updated_at >= now() - make_interval(days => %(days)s)
-                              and first_seen_at < now() - make_interval(days => %(days)s))
+                              and last_updated_at > first_seen_at)
     from students
     union all
     select 'mentor_assignments',
            count(*) filter (where first_seen_at >= now() - make_interval(days => %(days)s)),
            count(*) filter (where last_updated_at >= now() - make_interval(days => %(days)s)
-                              and first_seen_at < now() - make_interval(days => %(days)s))
+                              and last_updated_at > first_seen_at)
     from mentor_assignments
 """
 

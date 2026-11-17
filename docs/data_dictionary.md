@@ -55,7 +55,7 @@ values are fake.
 | `email` | text | `vito.mcging@students.example.edu` | Built from the name on a fake student domain | No |
 | `department` | code | `SS` | Intended department, or `UND` if undeclared | No |
 | `subject_area` | text | `Secondary Education` | Intended program; `Undeclared` when department is `UND` | No |
-| `entry_term` | text | `Fall 2026` | Term the student started | No |
+| `entry_term` | text | `Fall 2026` | Term the student started. The first load used Fall 2025, Spring 2026 and Fall 2026; students added by the Week 3 sync start in `Winter 2026` (the holiday-break session, Dec 2026–Jan 2027) | No |
 | `first_generation` | true/false | `false` | First in their family to attend college | No |
 | `athlete` | true/false | `true` | On a college athletic team (about 50%, to be updated with a real count) | No |
 | `mentoring_need` | text | `Life Skills` | The kind of mentoring the student most needs; same choices as faculty `mentoring_focus` | No |
@@ -103,6 +103,12 @@ Sciences, not in Allied Health or HPER.
 - **Detecting "what's new since last time" (Week 3):** I control the IDs, so new incoming students
   will be generated with IDs that continue after the highest `student_id` already in the database,
   and with the current `entry_term`. "New since last time" = IDs above the last loaded maximum.
+- **How the Week 3 sync works:** each run asks Mockaroo for two things. (1) New students: 25
+  records with IDs after the highest `student_id` in the database, all entering in `Winter 2026`.
+  (2) A change feed: 40 records with existing `student_id`s and new values for the only two fields
+  that can change, `mentoring_need` and `mentor_faculty_id`. About 10% of change records have no
+  mentor, which means that student's mentor was removed. Other fields of existing students are
+  never re-fetched, because Mockaroo would invent different names for the same IDs.
 
 ## Surprises
 

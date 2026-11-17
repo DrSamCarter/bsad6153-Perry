@@ -39,11 +39,12 @@ TABLES = ["departments", "programs", "mentoring_focus_areas", "faculty", "studen
           "faculty_focus_areas", "faculty_subjects", "mentor_assignments"]
 
 # First day of each kind of term (an assumption: adjust to the college calendar).
-TERM_START = {"Spring": (1, 15), "Summer": (6, 1), "Fall": (8, 20)}
+# Winter is the short holiday-break session, labeled by the year it starts in December.
+TERM_START = {"Winter": (12, 15), "Spring": (1, 15), "Summer": (6, 1), "Fall": (8, 20)}
 
 
 def term_start(entry_term):
-    """'Fall 2025' -> date(2025, 8, 20)."""
+    """'Fall 2025' -> date(2025, 8, 20); 'Winter 2026' -> date(2026, 12, 15)."""
     season, year = entry_term.split()
     month, day = TERM_START[season]
     return date(int(year), month, day)
